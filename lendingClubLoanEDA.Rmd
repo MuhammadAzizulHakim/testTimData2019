@@ -25,16 +25,27 @@ Tampilkan seluruh nama kolom yang ada:
 ```{r column names}
 colnames(loan)
 ```
+Struktur data:
+```{r data structure}
+str(loan)
+```
 Buat summary statistik data secara umum:
 ```{r summary}
 summary(loan)
 ```
-## Including Plots
+## 2. Analisis Data Eksploratif (EDA)
 
-You can also embed plots, for example:
+### Status Pinjaman (loan_status)
+```{r loan_status}
+library(dplyr)
+library(ggplot2)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+loan %>%
+  count(loan_status) %>%
+  ggplot(aes(x=reorder(loan_status, desc(n)), y=n, fill=n)) +
+  geom_col() +
+  coord_flip() +
+  labs(x="Loan Status", y="Count")
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
