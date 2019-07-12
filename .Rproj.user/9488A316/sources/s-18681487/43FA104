@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1562956975407.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "43FA104",
+    "lastKnownWriteTime" : 1562925679,
+    "last_content_update" : 1562925679,
+    "path" : "~/lending_club_loan_eda.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "20,6",
+        "scrollLine" : "16"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

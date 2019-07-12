@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1562957746946.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "84CAB6B9",
+    "lastKnownWriteTime" : 1562960635,
+    "last_content_update" : 1562960635,
+    "path" : "~/testTimData2019/README.md",
+    "project_path" : "README.md",
+    "properties" : {
+        "cursorPosition" : "1,18",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "markdown"
+}

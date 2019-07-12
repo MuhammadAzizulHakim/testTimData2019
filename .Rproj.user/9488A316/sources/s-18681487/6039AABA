@@ -1,0 +1,27 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1562957022775.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3635664056",
+    "id" : "6039AABA",
+    "lastKnownWriteTime" : 1562960707,
+    "last_content_update" : 1562960707445,
+    "path" : "~/testTimData2019/lendingClubLoanEDA.Rmd",
+    "project_path" : "lendingClubLoanEDA.Rmd",
+    "properties" : {
+        "cursorPosition" : "20,15",
+        "last_setup_crc32" : "18681487bb338d19",
+        "scrollLine" : "14",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
