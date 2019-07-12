@@ -9,11 +9,11 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## 1. Overview Data
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Sebelum memulai analisis data, sebaiknya kita lihat gambaran umum dari dataset yang kita miliki, untuk memberikan gambaran mengenai analisis yang akan kita lakukan selanjutnya.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Load dataset, dan tampilkan 5 observasi teratas:
 
 ```{r load data lending_club}
 loan <- readRDS("lending_club_loan_data.rds")
@@ -21,20 +21,12 @@ loan <- readRDS("lending_club_loan_data.rds")
 head(loan, n=5)
 ```
 
-Asdf
-```{r load data lending_club}
-loan <- readRDS("lending_club_loan_data.rds")
-
+Tampilkan seluruh nama kolom yang ada:
+```{r column names}
 colnames(loan)
-
-summary(loan)
 ```
-Asdf
-```{r load data lending_club}
-loan <- readRDS("lending_club_loan_data.rds")
-
-colnames(loan)
-
+Buat summary statistik data secara umum:
+```{r summary}
 summary(loan)
 ```
 ## Including Plots
