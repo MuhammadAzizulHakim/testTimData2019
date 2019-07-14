@@ -1,0 +1,7 @@
+desc (DONE)
+title (DONE)
+verification_status_joint (DONE)
+hardship_type (DONE)                           
+hardship_reason (DONE)
+hardship_status (DONE)
+hardship_loan_status (DONE)
