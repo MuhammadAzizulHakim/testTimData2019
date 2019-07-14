@@ -2,7 +2,10 @@
 title: "Analisis Data Eksploratif (EDA) Dataset Lending Club"
 author: "Muhammad Azizul Hakim"
 date: "7/13/2019"
-output: pdf_document
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -17,10 +20,6 @@ Load dataset, dan tampilkan 5 observasi teratas:
 
 ```{r load data lending_club}
 loan <- readRDS("lending_club_loan_data.rds")
-#Read data as nice table
-library(DT)
-#Read first 5 observations
-DT::datatable(loan[1:5,])
 ```
 
 Tampilkan seluruh nama kolom yang ada beserta struktur datanya:
@@ -206,9 +205,9 @@ Desc(loan2$loan_amnt, main="Loan Amount Distribution", plotit=TRUE)
 ```
 Dengan pertumbuhan jumlah pinjaman terhadap waktu sebagai berikut:
 ```{r loan_amnt vs issue_d (time series)}
-loan$issue_d <- as.Date(gsub("^", "01-", loan$issue_d), format="%d-%b-%Y")
+loan2$issue_d <- as.Date(gsub("^", "01-", loan2$issue_d), format="%d-%b-%Y")
 
-loan_amnt_df <- loan %>% 
+loan_amnt_df <- loan2 %>% 
   select(issue_d, loan_amnt) %>% 
   group_by(issue_d) %>% 
   summarise(Amount = sum(loan_amnt))
@@ -219,7 +218,7 @@ loan_amnt_ts + geom_line() + xlab("Date issued")
 ```
 Distribusi jumlah pinjaman terhadap status pinjaman:
 ```{r ggplot jumlah pinjaman terhadap status pinjaman}
-box_status <- ggplot(loan, aes(loan_status, loan_amnt))
+box_status <- ggplot(loan2, aes(loan_status, loan_amnt))
 box_status + geom_boxplot(aes(fill = loan_status)) +
   theme(axis.text.x = element_blank()) +
   labs(list(
@@ -229,7 +228,7 @@ box_status + geom_boxplot(aes(fill = loan_status)) +
 ```
 Dengan pertumbuhan jumlah pinjaman terhadap waktu, apabila dikelompokkan berdasarkan grade, sebagai berikut:
 ```{r loan_amnt time series by grade}
-loan_amnt_df_grade <- loan %>% 
+loan_amnt_df_grade <- loan2 %>% 
   select(issue_d, loan_amnt, grade) %>% 
   group_by(issue_d, grade) %>% 
   summarise(Amount = sum(loan_amnt))
