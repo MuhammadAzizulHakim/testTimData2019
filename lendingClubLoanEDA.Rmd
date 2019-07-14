@@ -57,11 +57,23 @@ sec_app_chargeoff_within_12_mths,
 sec_app_collections_12_mths_ex_med, 
 sec_app_mths_since_last_major_derog))
 ```
-Selanjutnya, kita identifikasi missing values di variabel-variabel lainnya, untuk memudahkan kita dalam mengambil keputusan untuk metode menangani data-data tidak lengkap tersebut:
+Selanjutnya, untuk data dengan tipe "character" dan masih memiliki missing values atau NA, kita ganti NA tersebut dengan character "None":
+```{r handle missing values in character data type}
+library(forcats) 
+library(tidyverse)
+library(magrittr)
+loan2 %<>% mutate(desc = fct_explicit_na(desc, na_level = "None"))
+loan2 %<>% mutate(title = fct_explicit_na(title, na_level = "None"))
+loan2 %<>% mutate(verification_status_joint = fct_explicit_na(verification_status_joint, na_level = "None"))
+loan2 %<>% mutate(hardship_type = fct_explicit_na(hardship_type, na_level = "None"))
+loan2 %<>% mutate(hardship_reason = fct_explicit_na(hardship_reason, na_level = "None"))
+loan2 %<>% mutate(hardship_status = fct_explicit_na(hardship_status, na_level = "None"))
+loan2 %<>% mutate(hardship_loan_status = fct_explicit_na(hardship_loan_status, na_level = "None"))
+```
+
+Mengatasi missing values pada data numerik:
 ```{r}
-unique(loan$hardship_type)
-loan2[loan2$hardship_type == 'INTEREST ONLY-3 MONTHS DEFERRAL',]
-subset(loan2, hardship_type == 'INTEREST ONLY-3 MONTHS DEFERRAL')
+summary(loan2$desc)
 ```
 
 
