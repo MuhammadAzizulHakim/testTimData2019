@@ -98,37 +98,59 @@ loan2 <- select (loan,-c(member_id,
                          dti_joint, 
                          next_pymnt_d))
 ```
+Cek kembali struktur data:
+```{r struktur data loan2}
+str(loan2)
+```
 Selanjutnya, untuk data dengan tipe "character" dan masih memiliki missing values atau NA, kita ganti NA tersebut dengan character "None":
 ```{r handle missing values in character data type}
 library(forcats) 
 library(tidyverse)
 library(magrittr)
 
-loan2 %<>% mutate(desc = fct_explicit_na(desc, na_level = "None"))
 loan2 %<>% mutate(title = fct_explicit_na(title, na_level = "None"))
-loan2 %<>% mutate(verification_status_joint = fct_explicit_na(verification_status_joint, na_level = "None"))
-loan2 %<>% mutate(hardship_type = fct_explicit_na(hardship_type, na_level = "None"))
-loan2 %<>% mutate(hardship_reason = fct_explicit_na(hardship_reason, na_level = "None"))
-loan2 %<>% mutate(hardship_status = fct_explicit_na(hardship_status, na_level = "None"))
-loan2 %<>% mutate(hardship_loan_status = fct_explicit_na(hardship_loan_status, na_level = "None"))
 loan2 %<>% mutate(emp_title = fct_explicit_na(emp_title, na_level = "None"))
 ```
+Mengatasi missing values pada data numerik dengan mengganti NA nilai rata-rata atau mean:
+```{r replace NA with mean}
+loan2 = transform(loan2, dti = ifelse(is.na(dti), mean(dti, na.rm=TRUE), dti))
+loan2 = transform(loan2, revol_util = ifelse(is.na(revol_util), mean(revol_util, na.rm=TRUE), revol_util))
+loan2 = transform(loan2, collections_12_mths_ex_med = ifelse(is.na(collections_12_mths_ex_med), mean(collections_12_mths_ex_med, na.rm=TRUE), collections_12_mths_ex_med))
+loan2 = transform(loan2, total_il_high_credit_limit = ifelse(is.na(total_il_high_credit_limit), mean(total_il_high_credit_limit, na.rm=TRUE), total_il_high_credit_limit))
+loan2 = transform(loan2, total_bc_limit = ifelse(is.na(total_bc_limit), mean(total_bc_limit, na.rm=TRUE), total_bc_limit))
+loan2 = transform(loan2, total_bal_ex_mort = ifelse(is.na(total_bal_ex_mort), mean(total_bal_ex_mort, na.rm=TRUE), total_bal_ex_mort))
+loan2 = transform(loan2, tot_hi_cred_lim = ifelse(is.na(tot_hi_cred_lim), mean(tot_hi_cred_lim, na.rm=TRUE), tot_hi_cred_lim))
+loan2 = transform(loan2, tax_liens = ifelse(is.na(tax_liens), mean(tax_liens, na.rm=TRUE), tax_liens))
+loan2 = transform(loan2, pub_rec_bankruptcies = ifelse(is.na(pub_rec_bankruptcies), mean(pub_rec_bankruptcies, na.rm=TRUE), pub_rec_bankruptcies))
+loan2 = transform(loan2, percent_bc_gt_75 = ifelse(is.na(percent_bc_gt_75), mean(percent_bc_gt_75, na.rm=TRUE), percent_bc_gt_75))
+loan2 = transform(loan2, pct_tl_nvr_dlq = ifelse(is.na(pct_tl_nvr_dlq), mean(pct_tl_nvr_dlq, na.rm=TRUE), pct_tl_nvr_dlq))
+loan2 = transform(loan2, tot_coll_amt = ifelse(is.na(tot_coll_amt), mean(tot_coll_amt, na.rm=TRUE), tot_coll_amt))
+loan2 = transform(loan2, tot_cur_bal = ifelse(is.na(tot_cur_bal), mean(tot_cur_bal, na.rm=TRUE), tot_cur_bal))
 
-Mengatasi missing values pada data numerik dengan menggunakan mean:
-```{r}
-library(imputeTS)
-loan2 %<>% na_mean(dti)
-loan2 <- na_mean(loan2$dti)
+loan2 = transform(loan2, dti = ifelse(is.na(dti), mean(dti, na.rm=TRUE), dti))
+loan2 = transform(loan2, dti = ifelse(is.na(dti), mean(dti, na.rm=TRUE), dti))
+loan2 = transform(loan2, dti = ifelse(is.na(dti), mean(dti, na.rm=TRUE), dti))
 
-library(dplyr)
-
-loan2 %>% group_by(loan_amnt) %>% 
-  mutate(dti = ifelse(is.na(dti), mean(dti, na.rm = TRUE), dti),
-         Sur = ifelse(is.na(Sur), mean(Sur, na.rm = TRUE), Sur))
 ```
-Mengatasi missing values pada data numerik dengan mengganti "NA" dengan "0":
-```{r}
-na_replace(x, fill = 0)
+Mengatasi missing values pada data numerik dengan mengganti "NA" dengan "0" (khusus data numerik yang memiliki banyak (>= 50%) data kosong, dan berkaitan dengan tenggat waktu atau status pinjaman tertentu):
+```{r replace NA with 0}
+loan2 = transform(loan2, mths_since_recent_bc_dlq = ifelse(is.na(mths_since_recent_bc_dlq), 0, mths_since_recent_bc_dlq))
+loan2 = transform(loan2, mths_since_last_delinq = ifelse(is.na(mths_since_last_delinq), 0, mths_since_last_delinq))
+loan2 = transform(loan2, mo_sin_old_il_acct = ifelse(is.na(mo_sin_old_il_acct), 0, mo_sin_old_il_acct))
+loan2 = transform(loan2, mo_sin_old_rev_tl_op = ifelse(is.na(mo_sin_old_rev_tl_op), 0, mo_sin_old_rev_tl_op))
+loan2 = transform(loan2, mo_sin_rcnt_rev_tl_op = ifelse(is.na(mo_sin_rcnt_rev_tl_op), 0, mo_sin_rcnt_rev_tl_op))
+loan2 = transform(loan2, mo_sin_rcnt_tl = ifelse(is.na(mo_sin_rcnt_tl), 0, mo_sin_rcnt_tl))
+loan2 = transform(loan2, mths_since_recent_bc = ifelse(is.na(mths_since_recent_bc), 0, mths_since_recent_bc))
+loan2 = transform(loan2, num_tl_op_past_12m = ifelse(is.na(num_tl_op_past_12m), 0, num_tl_op_past_12m))
+loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
+loan2 = transform(loan2, chargeoff_within_12_mths = ifelse(is.na(chargeoff_within_12_mths), 0, chargeoff_within_12_mths))
+loan2 = transform(loan2, mths_since_last_major_derog = ifelse(is.na(mths_since_last_major_derog), 0, mths_since_last_major_derog))
+
+loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
+loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
+loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
+
+
 ```
 
 
@@ -139,7 +161,7 @@ na_replace(x, fill = 0)
 library(dplyr)
 library(ggplot2)
 
-loan %>%
+loan2 %>%
   count(loan_status) %>%
   ggplot(aes(x=reorder(loan_status, desc(n)), y=n, fill=n)) +
   geom_col() +
@@ -150,7 +172,7 @@ Untuk lebih memperjelas hasil analisis distribusi, diplotkan pula frekuensi loan
 ```{r desctools loan_status}
 library(DescTools)
 
-Desc(loan$loan_status, main="Loan Status Distribution", plotit = TRUE)
+Desc(loan2$loan_status, main="Loan Status Distribution", plotit = TRUE)
 ```
 
 
@@ -159,7 +181,7 @@ Desc(loan$loan_status, main="Loan Status Distribution", plotit = TRUE)
 
 Berikut ini adalah visualisasi loan_amnt menggunakan density plot, box plot, dan empirical distribution function plot:
 ```{r desctools loan_amnt}
-Desc(loan$loan_amnt, main="Loan Amount Distribution", plotit=TRUE)
+Desc(loan2$loan_amnt, main="Loan Amount Distribution", plotit=TRUE)
 ```
 Dengan pertumbuhan jumlah pinjaman terhadap waktu sebagai berikut:
 ```{r loan_amnt vs issue_d (time series)}
