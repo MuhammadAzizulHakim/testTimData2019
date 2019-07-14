@@ -39,29 +39,71 @@ Identifikasi missing values:
 ```{r identify count of missing values}
 colSums(is.na(loan))
 ```
-Kita lihat bahwa dari total 707838 observasi dari dataset Lending Club Loan, terdapat 13 variabel yang seluruh datanya kosong. Sehingga terlebih dahulu, harus kita hilangkan variabel-variabel tersebut, dan simpan menjadi variabel data "loan2":
+Kita lihat bahwa dari total 707838 observasi dari dataset Lending Club Loan, terdapat 13 variabel yang seluruh datanya kosong, terdapat variabel-variabel yang memiliki NA lebih dari 80% keseluruhan observasi. Sehingga terlebih dahulu, harus kita hilangkan variabel-variabel tersebut, dan simpan menjadi variabel data "loan2":
 ```{r remove variables with no data}
 library(dplyr)
 
 # Drop the columns of the dataframe
-loan2 <- select (loan,-c(member_id, url, 
-revol_bal_joint, 
-sec_app_earliest_cr_line, 
-sec_app_inq_last_6mths, 
-sec_app_mort_acc, 
-sec_app_open_acc, 
-sec_app_revol_util,
-sec_app_open_act_il,                      
-sec_app_num_rev_accts, 
-sec_app_chargeoff_within_12_mths,         
-sec_app_collections_12_mths_ex_med, 
-sec_app_mths_since_last_major_derog))
+loan2 <- select (loan,-c(member_id,
+                         desc,
+                         url, 
+                         mths_since_last_record,
+                         revol_bal_joint, 
+                         sec_app_earliest_cr_line,
+                         sec_app_inq_last_6mths, 
+                         sec_app_mort_acc, 
+                         sec_app_open_acc, 
+                         sec_app_revol_util,
+                         sec_app_open_act_il,                      
+                         sec_app_num_rev_accts, 
+                         sec_app_chargeoff_within_12_mths,         
+                         sec_app_collections_12_mths_ex_med, 
+                         sec_app_mths_since_last_major_derog,
+                         hardship_type, 
+                         hardship_reason, 
+                         hardship_status, 
+                         deferral_term, 
+                         hardship_amount, 
+                         hardship_start_date, 
+                         hardship_end_date, 
+                         payment_plan_start_date, 
+                         hardship_length, 
+                         hardship_dpd, 
+                         hardship_loan_status, 
+                         orig_projected_additional_accrued_interest, 
+                         hardship_payoff_balance_amount, 
+                         hardship_last_payment_amount, 
+                         debt_settlement_flag_date, 
+                         settlement_status, 
+                         settlement_date, 
+                         settlement_amount, 
+                         settlement_percentage, 
+                         settlement_term, 
+                         inq_last_12m, 
+                         inq_fi, 
+                         total_cu_tl, 
+                         all_util, 
+                         open_acc_6m, 
+                         open_act_il, 
+                         open_il_12m, 
+                         open_il_24m, 
+                         mths_since_rcnt_il, 
+                         total_bal_il, 
+                         il_util, 
+                         open_rv_12m, 
+                         open_rv_24m, 
+                         max_bal_bc, 
+                         verification_status_joint, 
+                         annual_inc_joint, 
+                         dti_joint, 
+                         next_pymnt_d))
 ```
 Selanjutnya, untuk data dengan tipe "character" dan masih memiliki missing values atau NA, kita ganti NA tersebut dengan character "None":
 ```{r handle missing values in character data type}
 library(forcats) 
 library(tidyverse)
 library(magrittr)
+
 loan2 %<>% mutate(desc = fct_explicit_na(desc, na_level = "None"))
 loan2 %<>% mutate(title = fct_explicit_na(title, na_level = "None"))
 loan2 %<>% mutate(verification_status_joint = fct_explicit_na(verification_status_joint, na_level = "None"))
@@ -69,11 +111,24 @@ loan2 %<>% mutate(hardship_type = fct_explicit_na(hardship_type, na_level = "Non
 loan2 %<>% mutate(hardship_reason = fct_explicit_na(hardship_reason, na_level = "None"))
 loan2 %<>% mutate(hardship_status = fct_explicit_na(hardship_status, na_level = "None"))
 loan2 %<>% mutate(hardship_loan_status = fct_explicit_na(hardship_loan_status, na_level = "None"))
+loan2 %<>% mutate(emp_title = fct_explicit_na(emp_title, na_level = "None"))
 ```
 
-Mengatasi missing values pada data numerik:
+Mengatasi missing values pada data numerik dengan menggunakan mean:
 ```{r}
-summary(loan2$desc)
+library(imputeTS)
+loan2 %<>% na_mean(dti)
+loan2 <- na_mean(loan2$dti)
+
+library(dplyr)
+
+loan2 %>% group_by(loan_amnt) %>% 
+  mutate(dti = ifelse(is.na(dti), mean(dti, na.rm = TRUE), dti),
+         Sur = ifelse(is.na(Sur), mean(Sur, na.rm = TRUE), Sur))
+```
+Mengatasi missing values pada data numerik dengan mengganti "NA" dengan "0":
+```{r}
+na_replace(x, fill = 0)
 ```
 
 
