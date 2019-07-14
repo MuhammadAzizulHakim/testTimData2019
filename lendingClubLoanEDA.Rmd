@@ -17,15 +17,13 @@ Load dataset, dan tampilkan 5 observasi teratas:
 
 ```{r load data lending_club}
 loan <- readRDS("lending_club_loan_data.rds")
-
-head(loan, n=5)
+#Read data as nice table
+library(DT)
+#Read first 5 observations
+DT::datatable(loan[1:5,])
 ```
 
-Tampilkan seluruh nama kolom yang ada:
-```{r column names}
-colnames(loan)
-```
-Struktur data:
+Tampilkan seluruh nama kolom yang ada beserta struktur datanya:
 ```{r data structure}
 str(loan)
 ```
@@ -33,6 +31,40 @@ Buat summary statistik data secara umum:
 ```{r summary}
 summary(loan)
 ```
+
+###1.1. Identifikasi Missing Values
+
+Sebelum memulai analisis, terlebih dahulu kita identifikasi dahulu data yang tidak lengkap, agar tidak merusak performa analisis maupun model machine learning yang akan kita gunakan untuk Credit Scoring Model.
+Identifikasi missing values:
+```{r identify count of missing values}
+colSums(is.na(loan))
+```
+Kita lihat bahwa dari total 707838 observasi dari dataset Lending Club Loan, terdapat 13 variabel yang seluruh datanya kosong. Sehingga terlebih dahulu, harus kita hilangkan variabel-variabel tersebut, dan simpan menjadi variabel data "loan2":
+```{r remove variables with no data}
+library(dplyr)
+
+# Drop the columns of the dataframe
+loan2 <- select (loan,-c(member_id, url, 
+revol_bal_joint, 
+sec_app_earliest_cr_line, 
+sec_app_inq_last_6mths, 
+sec_app_mort_acc, 
+sec_app_open_acc, 
+sec_app_revol_util,
+sec_app_open_act_il,                      
+sec_app_num_rev_accts, 
+sec_app_chargeoff_within_12_mths,         
+sec_app_collections_12_mths_ex_med, 
+sec_app_mths_since_last_major_derog))
+```
+Selanjutnya, kita identifikasi missing values di variabel-variabel lainnya, untuk memudahkan kita dalam mengambil keputusan untuk metode menangani data-data tidak lengkap tersebut:
+```{r}
+unique(loan$hardship_type)
+loan2[loan2$hardship_type == 'INTEREST ONLY-3 MONTHS DEFERRAL',]
+subset(loan2, hardship_type == 'INTEREST ONLY-3 MONTHS DEFERRAL')
+```
+
+
 ## 2. Analisis Data Eksploratif (EDA)
 
 ### Status Pinjaman (loan_status)
