@@ -39,14 +39,18 @@ Identifikasi missing values:
 ```{r identify count of missing values}
 colSums(is.na(loan))
 ```
-Kita lihat bahwa dari total 707838 observasi dari dataset Lending Club Loan, terdapat 13 variabel yang seluruh datanya kosong, terdapat variabel-variabel yang memiliki NA lebih dari 80% keseluruhan observasi. Sehingga terlebih dahulu, harus kita hilangkan variabel-variabel tersebut, dan simpan menjadi variabel data "loan2":
+Kita lihat bahwa dari total 707838 observasi dari dataset Lending Club Loan, terdapat 13 variabel yang seluruh datanya kosong, terdapat variabel-variabel yang memiliki NA lebih dari 80% keseluruhan observasi, serta terdapat 2 variabel waktu yang memiliki missing value. Dikarenakan variabel waktu terpenting adalah issue_d dan earliest_cr_line, sehingga untuk mengurangi kompleksitas interpolasi data tipe "date", maka kedua variabel waktu tersebut (last_pymnt_d dan last_credit_pull_d) juga dihilangkan, karena kita juga tidak bisa mengambil risiko untuk menghapus baris observasi, karena mengandung "loan_status" yang akan diprediksi nanti. 
+
+Berikut ini proses penghapusan variabel-variabel tersebut, dan simpan menjadi variabel data "loan2":
 ```{r remove variables with no data}
 library(dplyr)
 
 # Drop the columns of the dataframe
 loan2 <- select (loan,-c(member_id,
                          desc,
-                         url, 
+                         url,
+                         last_pymnt_d,
+                         last_credit_pull_d,
                          mths_since_last_record,
                          revol_bal_joint, 
                          sec_app_earliest_cr_line,
@@ -126,11 +130,13 @@ loan2 = transform(loan2, percent_bc_gt_75 = ifelse(is.na(percent_bc_gt_75), mean
 loan2 = transform(loan2, pct_tl_nvr_dlq = ifelse(is.na(pct_tl_nvr_dlq), mean(pct_tl_nvr_dlq, na.rm=TRUE), pct_tl_nvr_dlq))
 loan2 = transform(loan2, tot_coll_amt = ifelse(is.na(tot_coll_amt), mean(tot_coll_amt, na.rm=TRUE), tot_coll_amt))
 loan2 = transform(loan2, tot_cur_bal = ifelse(is.na(tot_cur_bal), mean(tot_cur_bal, na.rm=TRUE), tot_cur_bal))
-
-loan2 = transform(loan2, dti = ifelse(is.na(dti), mean(dti, na.rm=TRUE), dti))
-loan2 = transform(loan2, dti = ifelse(is.na(dti), mean(dti, na.rm=TRUE), dti))
-loan2 = transform(loan2, dti = ifelse(is.na(dti), mean(dti, na.rm=TRUE), dti))
-
+loan2 = transform(loan2, total_rev_hi_lim = ifelse(is.na(total_rev_hi_lim), mean(total_rev_hi_lim, na.rm=TRUE), total_rev_hi_lim))
+loan2 = transform(loan2, mths_since_recent_revol_delinq = ifelse(is.na(mths_since_recent_revol_delinq), mean(mths_since_recent_revol_delinq, na.rm=TRUE), mths_since_recent_revol_delinq))
+loan2 = transform(loan2, avg_cur_bal = ifelse(is.na(avg_cur_bal), mean(avg_cur_bal, na.rm=TRUE), avg_cur_bal))
+loan2 = transform(loan2, bc_open_to_buy = ifelse(is.na(bc_open_to_buy), mean(bc_open_to_buy, na.rm=TRUE), bc_open_to_buy))
+loan2 = transform(loan2, bc_util = ifelse(is.na(bc_util), mean(bc_util, na.rm=TRUE), bc_util))
+loan2 = transform(loan2, num_bc_sats = ifelse(is.na(num_bc_sats), mean(num_bc_sats, na.rm=TRUE), num_bc_sats))
+loan2 = transform(loan2, mort_acc = ifelse(is.na(mort_acc), mean(mort_acc, na.rm=TRUE), mort_acc))
 ```
 Mengatasi missing values pada data numerik dengan mengganti "NA" dengan "0" (khusus data numerik yang memiliki banyak (>= 50%) data kosong, dan berkaitan dengan tenggat waktu atau status pinjaman tertentu):
 ```{r replace NA with 0}
@@ -145,12 +151,27 @@ loan2 = transform(loan2, num_tl_op_past_12m = ifelse(is.na(num_tl_op_past_12m), 
 loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
 loan2 = transform(loan2, chargeoff_within_12_mths = ifelse(is.na(chargeoff_within_12_mths), 0, chargeoff_within_12_mths))
 loan2 = transform(loan2, mths_since_last_major_derog = ifelse(is.na(mths_since_last_major_derog), 0, mths_since_last_major_derog))
+loan2 = transform(loan2, num_tl_30dpd = ifelse(is.na(num_tl_30dpd), 0, num_tl_30dpd))
+loan2 = transform(loan2, num_tl_120dpd_2m = ifelse(is.na(num_tl_120dpd_2m), 0, num_tl_120dpd_2m))
+loan2 = transform(loan2, num_accts_ever_120_pd = ifelse(is.na(num_accts_ever_120_pd), 0, num_accts_ever_120_pd))
+loan2 = transform(loan2, mths_since_recent_inq = ifelse(is.na(mths_since_recent_inq), 0, mths_since_recent_inq))
+loan2 = transform(loan2, mths_since_recent_revol_delinq = ifelse(is.na(mths_since_recent_revol_delinq), mean(mths_since_recent_revol_delinq, na.rm=TRUE), mths_since_recent_revol_delinq))
+loan2 = transform(loan2, acc_open_past_24mths = ifelse(is.na(acc_open_past_24mths), 0, acc_open_past_24mths))
+loan2 = transform(loan2, num_actv_bc_tl = ifelse(is.na(num_actv_bc_tl), 0, num_actv_bc_tl))
+loan2 = transform(loan2, num_actv_rev_tl = ifelse(is.na(num_actv_rev_tl), 0, num_actv_rev_tl))
+loan2 = transform(loan2, num_bc_tl = ifelse(is.na(num_bc_tl), 0, num_bc_tl))
+loan2 = transform(loan2, num_il_tl = ifelse(is.na(num_il_tl), 0, num_il_tl))
+loan2 = transform(loan2, num_op_rev_tl = ifelse(is.na(num_op_rev_tl), 0, num_op_rev_tl))
+loan2 = transform(loan2, num_rev_accts = ifelse(is.na(num_rev_accts), 0, num_rev_accts))
+loan2 = transform(loan2, num_rev_tl_bal_gt_0 = ifelse(is.na(num_rev_tl_bal_gt_0), 0, num_rev_tl_bal_gt_0))
+```
 
-loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
-loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
-loan2 = transform(loan2, num_tl_90g_dpd_24m = ifelse(is.na(num_tl_90g_dpd_24m), 0, num_tl_90g_dpd_24m))
+### 1.2. Export Data yang Telah Bersih ke File Baru
 
-
+Simpan data yang telah dibersihkan menjadi file loan2.rds, untuk digunakan ketika membuat Credit Scoring Model:
+```{r export .rds}
+# Save a single object to a file
+saveRDS(loan2, "loan2.rds")
 ```
 
 
